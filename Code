@@ -1,0 +1,90 @@
+// -------- RF --------
+#define RF_PIN 27
+
+// -------- ULTRASONIC --------
+#define TRIG 5
+#define ECHO 4
+
+// -------- TRAFFIC LIGHT --------
+#define RED 18
+#define YELLOW 19
+#define GREEN 21
+
+bool ambulanceDetected = false;
+
+// -------- SETUP --------
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(RF_PIN, INPUT);
+
+  pinMode(TRIG, OUTPUT);
+  pinMode(ECHO, INPUT);
+
+  pinMode(RED, OUTPUT);
+  pinMode(YELLOW, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+}
+
+// -------- DISTANCE FUNCTION --------
+float getDistance() {
+  digitalWrite(TRIG, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+
+  long duration = pulseIn(ECHO, HIGH);
+  float distance = duration * 0.034 / 2;
+
+  return distance;
+}
+
+// -------- NORMAL TRAFFIC --------
+void normalTraffic() {
+  digitalWrite(GREEN, HIGH);
+  digitalWrite(RED, LOW);
+  digitalWrite(YELLOW, LOW);
+}
+
+// -------- EMERGENCY MODE --------
+void emergencyMode() {
+  Serial.println("🚑 Ambulance Priority Activated!");
+
+  digitalWrite(GREEN, LOW);
+  digitalWrite(YELLOW, LOW);
+  digitalWrite(RED, HIGH);
+
+  delay(1000);
+
+  digitalWrite(RED, LOW);
+  digitalWrite(GREEN, HIGH);
+
+  delay(5000);
+}
+
+// -------- LOOP --------
+void loop() {
+
+  int rfSignal = digitalRead(RF_PIN);
+  float distance = getDistance();
+
+  Serial.print("Distance: ");
+  Serial.println(distance);
+
+  // Detect ambulance signal
+  if (rfSignal == HIGH) {
+    ambulanceDetected = true;
+  }
+
+  // Condition: RF + Distance < 30 cm
+  if (ambulanceDetected && distance <= 30) {
+    emergencyMode();
+    ambulanceDetected = false;
+  } else {
+    normalTraffic();
+  }
+
+  delay(200);
+}
