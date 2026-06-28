@@ -1,0 +1,2 @@
+# AI-Assisted-Smart-Traffic-Control-and-Emergency-Vehicle-Priority-System
+Developed an intelligent traffic control prototype using ESP32 integrating ultrasonic sensing, RF-based emergency signal communication, and computer vision-based ambulance detection through a laptop camera. The system dynamically prioritizes emergency vehicles by automatically controlling traffic signals, demonstrating real-time sensor fusion, embedded systems design, and smart traffic management concepts.
